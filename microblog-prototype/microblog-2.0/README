@@ -1,0 +1,27 @@
+【微博-2.0】
+设计user表--对应的key规则
+
+注册用户
+incr global:userid
+set user:userid:1: username zhangsan
+set user:userid:1: password 123456
+
+//用于登录时的用户名查询
+set user:username:zhangsan: userid 1
+
+
+发微博：
+post:postid:3:time timestamp   发布时间
+post:postid:3:userid 5         发布作者
+post:postid:3:content content  发布内容
+
+incr global:postid   自增id
+set post:postid:$postid:time timestamp
+set post:postid:$postid:content $content
+set post:postid:$postid:userid $userid
+
+
+=========每人的微博前1000条存于redis，更旧的存在于数据库========
+思路：没人的1000条以前的，都推到global:store
+
+用定时任务，取global:store中的前1000条，写入数据库
